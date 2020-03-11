@@ -40,7 +40,7 @@ func Move(res http.ResponseWriter, req *http.Request) {
 	dump(decoded)
 
 	respond(res, api.MoveResponse{
-		Move: "left",
+		Move: "up",
 	})
 }
 
