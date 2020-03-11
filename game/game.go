@@ -43,11 +43,11 @@ func getDirection(head api.Coord, minFood api.Coord) (direction string) {
 	}
 
 	if head.Y <= minFood.Y {
-		direction = "up"
+		direction = "down"
 	}
 
 	if head.Y > minFood.Y {
-		direction = "down"
+		direction = "up"
 	}
 
 	return
