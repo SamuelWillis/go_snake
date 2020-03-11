@@ -11,30 +11,32 @@ import(
 func GetNextMove(decoded api.SnakeRequest) string {
 	move := "left"
 
+	snakeBody := decoded.You.Body
+	head := snakeBody[0]
 	food := decoded.Board.Food
 
-	head := decoded.You.Body[0]
-
 	min := math.Inf(0)
-	var min_food api.Coord
+	var minFood api.Coord
+
 	for i := 0; i < len(food); i++ {
 		dist :=  math.Abs(float64(food[i].X - head.X)) + math.Abs(float64(food[i].Y - head.Y))
 
 		if dist <= min {
 			min = dist
-			min_food = food[i]
+			minFood = food[i]
 		}
 	}
 
-	if min_food != (api.Coord{}) {
-		move = getDirection(head, min_food)
+	if minFood != (api.Coord{}) {
+		move = getDirection(snakeBody, minFood)
 	}
 
 	return move
 }
 
-func getDirection(head api.Coord, minFood api.Coord) (direction string) {
-	if head.X <= minFood.X {
+func getDirection(snakeBody []api.Coord, minFood api.Coord) (direction string) {
+	head := snakeBody[0]
+	if head.X < minFood.X {
 		direction = "right"
 	}
 
@@ -42,7 +44,7 @@ func getDirection(head api.Coord, minFood api.Coord) (direction string) {
 		direction = "left"
 	}
 
-	if head.Y <= minFood.Y {
+	if head.Y < minFood.Y {
 		direction = "down"
 	}
 

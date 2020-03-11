@@ -42,6 +42,8 @@ func Move(res http.ResponseWriter, req *http.Request) {
 
 	move := game.GetNextMove(decoded)
 
+	dump(move)
+
 	respond(res, api.MoveResponse{
 		Move: move,
 	})
