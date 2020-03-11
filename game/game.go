@@ -2,6 +2,7 @@ package game
 
 import(
 	"math"
+	"github.com/SamuelWillis/go_snake/helpers"
 )
 
 // GetNextMove that our snake will do.
@@ -33,7 +34,10 @@ func GetNextMove(state State) string {
 
 func getDirection(state State, minFood Coord) (direction string) {
 	head := state.You.Body[0]
+
 	validMoves := getValidMoves(state.You.Body)
+
+	helpers.Dump("Valid Moves", validMoves.up)
 
 	if head.X < minFood.X && validMoves.right {
 		direction = "right"
@@ -67,8 +71,8 @@ func getValidMoves(snake []Coord) ValidMoves {
 	body := snake[1:]
 	
 	return ValidMoves{
-		up: isValid(Coord{ X: head.X, Y: head.Y + 1 }, body),
-		down: isValid(Coord{ X: head.X, Y: head.Y - 1 }, body),
+		up: isValid(Coord{ X: head.X, Y: head.Y - 1 }, body),
+		down: isValid(Coord{ X: head.X, Y: head.Y + 1 }, body),
 		left: isValid(Coord{ X: head.X - 1, Y: head.Y }, body),
 		right: isValid(Coord{ X: head.X + 1, Y: head.Y }, body),
 	}
