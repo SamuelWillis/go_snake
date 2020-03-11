@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"github.com/SamuelWillis/go_snake/api"
+	"github.com/SamuelWillis/go_snake/game"
 )
 
 // Index endpont handler.
@@ -39,8 +40,10 @@ func Move(res http.ResponseWriter, req *http.Request) {
 
 	dump(decoded)
 
+	move := game.GetNextMove(decoded)
+
 	respond(res, api.MoveResponse{
-		Move: "up",
+		Move: move,
 	})
 }
 
