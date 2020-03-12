@@ -42,7 +42,10 @@ func getDirection(state State, minFood Coord) (direction string) {
 		right: isValidMove(Coord{ X: head.X + 1, Y: head.Y }, snakes),
 	}
 
-	helpers.Dump(validMoves)
+	helpers.Dump("up", validMoves.up)
+	helpers.Dump("down", validMoves.down)
+	helpers.Dump("left", validMoves.left)
+	helpers.Dump("right", validMoves.right)
 
 	if head.X < minFood.X && validMoves.right {
 		direction = "right"
@@ -73,12 +76,14 @@ type ValidMoves struct {
 
 func isValidMove(test Coord, snakes []Snake) bool {
 	isValid := true
+	helpers.Dump("testing", test)
+	helpers.Dump("", "")
 	for i := 0; i < len(snakes); i++ {
-		body := snakes[0].Body
+		body := snakes[i].Body
 		for j := 0; j < len(body); j++ {
-			if (test == body[i]) {
+			helpers.Dump("body", body[j])
+			if (test == body[j]) {
 				isValid = false
-				break
 			}
 		}
 	}

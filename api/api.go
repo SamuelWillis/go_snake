@@ -23,7 +23,7 @@ func Start(res http.ResponseWriter, req *http.Request) {
 		log.Printf("Bad move request: %v", err)
 	}
 
-	helpers.Dump(state)
+	helpers.Dump("decoded board state", state)
 
 	respond(res, StartResponse{
 		Color: "#75CEDD",
@@ -39,11 +39,11 @@ func Move(res http.ResponseWriter, req *http.Request) {
 		log.Printf("Bad move request: %v", err)
 	}
 
-	helpers.Dump(state)
+	helpers.Dump("decoded board state", state)
 
 	move := game.GetNextMove(state)
 
-	helpers.Dump(move)
+	helpers.Dump("next move", move)
 
 	respond(res, MoveResponse{
 		Move: move,
