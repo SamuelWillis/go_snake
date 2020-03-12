@@ -26,7 +26,9 @@ func Start(res http.ResponseWriter, req *http.Request) {
 	helpers.Dump("decoded board state", state)
 
 	respond(res, StartResponse{
-		Color: "#75CEDD",
+		Shout: "YEW!",
+		HeadType: "bendr",
+		TailType: "round-bum",
 	})
 }
 
