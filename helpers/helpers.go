@@ -6,9 +6,9 @@ import(
 )
 
 // Dump object to the logs
-func Dump(context string, obj interface{}) {
+func Dump(obj interface{}) {
 	data, err := json.MarshalIndent(obj, "", "  ")
 	if err == nil {
-		log.Printf(context, string(data))
+		log.Printf(string(data))
 	}
 }
