@@ -4,11 +4,11 @@ package game
 func GetNextMove(state State) string {
 	var move string
 
-	if ShouldEatFood() {
+	if shouldEatFood() {
 		move = getMoveToFood(state)
 	}
 
-	if ShouldAttack() {
+	if shouldAttack() {
 		move = getMoveToFood(state)
 	}
 
