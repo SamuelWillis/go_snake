@@ -2,10 +2,9 @@ package game
 
 import(
 	"math"
-	"github.com/SamuelWillis/go_snake/helpers"
 )
 
-func getMoveToFood(state State) string {
+func getMoveToFood(state State, validMoves ValidMoves) string {
 	move := ""
 	snakeBody := state.You.Body
 	head := snakeBody[0]
@@ -24,28 +23,14 @@ func getMoveToFood(state State) string {
 	}
 
 	if minFood != (Coord{}) {
-		move = getDirection(state, minFood)
+		move = getDirection(state, minFood, validMoves)
 	}
 
 	return move
 }
 
-func getDirection(state State, minFood Coord) (direction string) {
+func getDirection(state State, minFood Coord, validMoves ValidMoves) (direction string) {
 	head := state.You.Body[0]
-	snakes := state.Board.Snakes
-
-
-	validMoves := ValidMoves{
-		up: isValidMove(Coord{ X: head.X, Y: head.Y - 1 }, snakes),
-		down: isValidMove(Coord{ X: head.X, Y: head.Y + 1 }, snakes),
-		left: isValidMove(Coord{ X: head.X - 1, Y: head.Y }, snakes),
-		right: isValidMove(Coord{ X: head.X + 1, Y: head.Y }, snakes),
-	}
-
-	helpers.Dump("up", validMoves.up)
-	helpers.Dump("down", validMoves.down)
-	helpers.Dump("left", validMoves.left)
-	helpers.Dump("right", validMoves.right)
 
 	if head.X < minFood.X && validMoves.right {
 		direction = "right"
@@ -64,28 +49,4 @@ func getDirection(state State, minFood Coord) (direction string) {
 	}
 
 	return
-}
-
-// ValidMoves type
-type ValidMoves struct {
-	up bool
-	down bool
-	left bool
-	right bool
-}
-
-func isValidMove(test Coord, snakes []Snake) bool {
-	isValid := true
-	helpers.Dump("testing", test)
-	helpers.Dump("", "")
-	for i := 0; i < len(snakes); i++ {
-		body := snakes[i].Body
-		for j := 0; j < len(body); j++ {
-			helpers.Dump("body", body[j])
-			if (test == body[j]) {
-				isValid = false
-			}
-		}
-	}
-	return isValid
 }
