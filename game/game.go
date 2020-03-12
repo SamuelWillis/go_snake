@@ -28,13 +28,12 @@ func GetNextMove(state State) string {
 
 func getValidMoves(state State) ValidMoves {
 	head := state.You.Body[0]
-	snakes := state.Board.Snakes
 
 	validMoves := ValidMoves{
-		up: isValidMove(Coord{ X: head.X, Y: head.Y - 1 }, snakes),
-		down: isValidMove(Coord{ X: head.X, Y: head.Y + 1 }, snakes),
-		left: isValidMove(Coord{ X: head.X - 1, Y: head.Y }, snakes),
-		right: isValidMove(Coord{ X: head.X + 1, Y: head.Y }, snakes),
+		up: isValidMove(Coord{ X: head.X, Y: head.Y - 1 }, state),
+		down: isValidMove(Coord{ X: head.X, Y: head.Y + 1 }, state),
+		left: isValidMove(Coord{ X: head.X - 1, Y: head.Y }, state),
+		right: isValidMove(Coord{ X: head.X + 1, Y: head.Y }, state),
 	}
 
 	helpers.Dump("up", validMoves.up)
@@ -45,14 +44,23 @@ func getValidMoves(state State) ValidMoves {
 	return validMoves
 }
 
-func isValidMove(test Coord, snakes []Snake) bool {
+func isValidMove(test Coord, state State) bool {
 	isValid := true
-	helpers.Dump("testing", test)
-	helpers.Dump("", "")
+	snakes := state.Board.Snakes
+
+	// out of bounds
+	if test.X < 0 || test.X >= state.Board.Width {
+		return false
+	}
+
+	// out of bounds
+	if test.Y < 0 || test.Y >= state.Board.Height {
+		return false
+	}
+
 	for i := 0; i < len(snakes); i++ {
 		body := snakes[i].Body
 		for j := 0; j < len(body); j++ {
-			helpers.Dump("body", body[j])
 			if (test == body[j]) {
 				isValid = false
 			}
