@@ -2,7 +2,6 @@ package game
 
 import(
 	"math"
-	"github.com/SamuelWillis/go_snake/helpers"
 )
 
 // GetNextMove that our snake will do.
@@ -34,10 +33,14 @@ func GetNextMove(state State) string {
 
 func getDirection(state State, minFood Coord) (direction string) {
 	head := state.You.Body[0]
+	snakes := state.Board.Snakes
 
-	validMoves := getValidMoves(state.You.Body)
-
-	helpers.Dump("Valid Moves", validMoves.up)
+	validMoves := ValidMoves{
+		up: isValidMove(Coord{ X: head.X, Y: head.Y - 1 }, snakes),
+		down: isValidMove(Coord{ X: head.X, Y: head.Y + 1 }, snakes),
+		left: isValidMove(Coord{ X: head.X - 1, Y: head.Y }, snakes),
+		right: isValidMove(Coord{ X: head.X + 1, Y: head.Y }, snakes),
+	}
 
 	if head.X < minFood.X && validMoves.right {
 		direction = "right"
@@ -66,24 +69,15 @@ type ValidMoves struct {
 	right bool
 }
 
-func getValidMoves(snake []Coord) ValidMoves {
-	head := snake[0]
-	body := snake[1:]
-	
-	return ValidMoves{
-		up: isValid(Coord{ X: head.X, Y: head.Y - 1 }, body),
-		down: isValid(Coord{ X: head.X, Y: head.Y + 1 }, body),
-		left: isValid(Coord{ X: head.X - 1, Y: head.Y }, body),
-		right: isValid(Coord{ X: head.X + 1, Y: head.Y }, body),
-	}
-}
-
-func isValid(test Coord, body []Coord) bool {
+func isValidMove(test Coord, snakes []Snake) bool {
 	isValid := true
-	for i := 0; i < len(body); i++ {
-		if (test == body[i]) {
-			isValid = false
-			break
+	for i := 0; i < len(snakes); i++ {
+		body := snakes[0].Body
+		for j := 0; j < len(body); j++ {
+			if (test == body[i]) {
+				isValid = false
+				break
+			}
 		}
 	}
 	return isValid
