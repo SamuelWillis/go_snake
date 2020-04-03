@@ -4,12 +4,13 @@ type Behaviours struct {
 	State State
 }
 
-func (behaviours Behaviours) ShouldEatFood() bool {
-	health := behaviours.State.You.Health
-	return health < 50
+func (Behaviours Behaviours) ShouldEatFood() bool {
+	health := Behaviours.State.You.Health
+	body := Behaviours.State.You.Body
+	return len(body) < 10 || health < 50
 }
 
-func (behaviours Behaviours) ShouldChaseTail() bool {
-	health := behaviours.State.You.Health
+func (Behaviours Behaviours) ShouldChaseTail() bool {
+	health := Behaviours.State.You.Health
 	return health >= 50
 }
