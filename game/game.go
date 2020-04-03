@@ -10,13 +10,22 @@ import(
 func GetNextMove(state State) string {
 	var move string
 	validMoves := getValidMoves(state)
-
-	if shouldEatFood() {
-		move = getMoveToFood(state, validMoves)
+	behaviours := Behaviours{
+		State: state,
 	}
 
-	if shouldAttack() {
-		move = getMoveToFood(state, validMoves)
+	if behaviours.ShouldEatFood() {
+		move = EatFood{
+			State: state,
+			ValidMoves: validMoves,
+		}.getMoveToFood()
+	}
+
+	if behaviours.ShouldChaseTail() {
+		move = ChaseTail{
+			State: state,
+			ValidMoves: validMoves,
+		}.getMoveToTail()
 	}
 
 	if move == "" {

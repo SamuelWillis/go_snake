@@ -4,11 +4,16 @@ import(
 	"math"
 )
 
-func getMoveToFood(state State, validMoves ValidMoves) string {
+type EatFood struct {
+	State State
+	ValidMoves ValidMoves
+}
+
+func (eatfood EatFood) getMoveToFood() string {
 	move := ""
-	snakeBody := state.You.Body
+	snakeBody := eatfood.State.You.Body
 	head := snakeBody[0]
-	food := state.Board.Food
+	food := eatfood.State.Board.Food
 
 	min := math.Inf(0)
 	var minFood Coord
@@ -23,28 +28,28 @@ func getMoveToFood(state State, validMoves ValidMoves) string {
 	}
 
 	if minFood != (Coord{}) {
-		move = getDirection(state, minFood, validMoves)
+		move = getDirectionToCoord(eatfood.State, minFood, eatfood.ValidMoves)
 	}
 
 	return move
 }
 
-func getDirection(state State, minFood Coord, validMoves ValidMoves) (direction string) {
+func getDirectionToCoord(state State, coord Coord, validMoves ValidMoves) (direction string) {
 	head := state.You.Body[0]
 
-	if head.X < minFood.X && validMoves.right {
+	if head.X < coord.X && validMoves.right {
 		direction = "right"
 	}
 
-	if head.X > minFood.X && validMoves.left {
+	if head.X > coord.X && validMoves.left {
 		direction = "left"
 	}
 
-	if head.Y < minFood.Y && validMoves.down {
+	if head.Y < coord.Y && validMoves.down {
 		direction = "down"
 	}
 
-	if head.Y > minFood.Y && validMoves.up {
+	if head.Y > coord.Y && validMoves.up {
 		direction = "up"
 	}
 
