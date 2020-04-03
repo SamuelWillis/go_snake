@@ -21,7 +21,7 @@ func GetNextMove(state State) string {
 		}.getMoveToFood()
 	}
 
-	if !behaviours.ShouldEatFood && behaviours.ShouldChaseTail() {
+	if !behaviours.ShouldEatFood() && behaviours.ShouldChaseTail() {
 		move = ChaseTail{
 			State: state,
 			ValidMoves: validMoves,
