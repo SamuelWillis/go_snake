@@ -30,6 +30,7 @@ func GetNextMove(state State) string {
 
 	if move == "" {
 		move = chooseRandomMove(validMoves)
+		helpers.Dump("choosing random move", move)
 	}
 
 	return move
