@@ -1,16 +1,16 @@
 package game
 
 type Behaviours struct {
-	State State
+	You Snake
 }
 
 func (Behaviours Behaviours) ShouldEatFood() bool {
-	health := Behaviours.State.You.Health
-	body := Behaviours.State.You.Body
+	health := Behaviours.You.Health
+	body := Behaviours.You.Body
 	return len(body) < 10 || health < 50
 }
 
 func (Behaviours Behaviours) ShouldChaseTail() bool {
-	health := Behaviours.State.You.Health
+	health := Behaviours.You.Health
 	return health >= 50
 }

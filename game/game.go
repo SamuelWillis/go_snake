@@ -11,7 +11,7 @@ func GetNextMove(state State) string {
 	var move string
 	validMoves := getValidMoves(state)
 	behaviours := Behaviours{
-		State: state,
+		You: state.You,
 	}
 
 	if behaviours.ShouldEatFood() {

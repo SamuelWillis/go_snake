@@ -26,7 +26,7 @@ func Start(res http.ResponseWriter, req *http.Request) {
 	helpers.Dump("decoded board state", state)
 
 	respond(res, StartResponse{
-		HeadType: "beluga",
+		HeadType: "bendr",
 		TailType: "round-bum",
 	})
 }
