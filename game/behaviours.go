@@ -12,5 +12,5 @@ func (Behaviours Behaviours) ShouldEatFood() bool {
 
 func (Behaviours Behaviours) ShouldChaseTail() bool {
 	health := Behaviours.You.Health
-	return health >= 50
+	return !Behaviours.ShouldEatFood() && health >= 50
 }

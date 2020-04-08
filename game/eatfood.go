@@ -1,25 +1,32 @@
 package game
 
-import(
+import (
 	"math"
 )
 
 type EatFood struct {
-	State State
-	ValidMoves ValidMoves
+	You  Snake
+	Food []Coord
 }
 
-func (eatfood EatFood) getMoveToFood() string {
-	move := ""
-	snakeBody := eatfood.State.You.Body
-	head := snakeBody[0]
-	food := eatfood.State.Board.Food
-
-	min := math.Inf(0)
+func (EatFood EatFood) GetMoveToFood() Coord {
 	var minFood Coord
 
+	snakeBody := EatFood.You.Body
+	head := snakeBody[0]
+	food := EatFood.Food
+
+	// If only one food return it.
+	if len(food) == 1 {
+		return food[0]
+	}
+
+	min := math.Inf(0)
+
 	for i := 0; i < len(food); i++ {
-		dist :=  math.Abs(float64(food[i].X - head.X)) + math.Abs(float64(food[i].Y - head.Y))
+		xDist := math.Abs(float64(food[i].X - head.X))
+		yDist := math.Abs(float64(food[i].Y - head.Y))
+		dist := math.Abs(xDist + yDist)
 
 		if dist <= min {
 			min = dist
@@ -27,31 +34,5 @@ func (eatfood EatFood) getMoveToFood() string {
 		}
 	}
 
-	if minFood != (Coord{}) {
-		move = getDirectionToCoord(eatfood.State, minFood, eatfood.ValidMoves)
-	}
-
-	return move
-}
-
-func getDirectionToCoord(state State, coord Coord, validMoves ValidMoves) (direction string) {
-	head := state.You.Body[0]
-
-	if head.X < coord.X && validMoves.right {
-		direction = "right"
-	}
-
-	if head.X > coord.X && validMoves.left {
-		direction = "left"
-	}
-
-	if head.Y < coord.Y && validMoves.down {
-		direction = "down"
-	}
-
-	if head.Y > coord.Y && validMoves.up {
-		direction = "up"
-	}
-
-	return
+	return minFood
 }

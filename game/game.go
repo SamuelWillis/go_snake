@@ -8,32 +8,56 @@ import(
 
 // GetNextMove that our snake will do.
 func GetNextMove(state State) string {
-	var move string
+	var coordToMoveTo Coord
+
 	validMoves := getValidMoves(state)
 	behaviours := Behaviours{
 		You: state.You,
 	}
 
 	if behaviours.ShouldEatFood() {
-		move = EatFood{
-			State: state,
-			ValidMoves: validMoves,
-		}.getMoveToFood()
+		coordToMoveTo = EatFood{
+			You: state.You,
+			Food: state.Board.Food,
+		}.GetMoveToFood()
 	}
 
-	if !behaviours.ShouldEatFood() && behaviours.ShouldChaseTail() {
-		move = ChaseTail{
-			State: state,
-			ValidMoves: validMoves,
-		}.getMoveToTail()
+	if behaviours.ShouldChaseTail() {
+		coordToMoveTo = ChaseTail{
+			You: state.You,
+		}.GetMoveToTail()
 	}
 
-	if move == "" {
-		move = chooseRandomMove(validMoves)
+	// Safety Net. If no coord to move to choose a random move.
+	if coordToMoveTo == (Coord{}) {
+		move := chooseRandomMove(validMoves)
 		helpers.Dump("choosing random move", move)
+		return move
 	}
 
-	return move
+	return getDirectionToCoord(coordToMoveTo, state, validMoves)
+}
+
+func getDirectionToCoord(coord Coord, state State, validMoves ValidMoves) (direction string) {
+	head := state.You.Body[0]
+
+	if head.X < coord.X && validMoves.right {
+		direction = "right"
+	}
+
+	if head.X > coord.X && validMoves.left {
+		direction = "left"
+	}
+
+	if head.Y < coord.Y && validMoves.down {
+		direction = "down"
+	}
+
+	if head.Y > coord.Y && validMoves.up {
+		direction = "up"
+	}
+
+	return chooseRandomMove(validMoves)
 }
 
 func getValidMoves(state State) ValidMoves {
@@ -45,11 +69,6 @@ func getValidMoves(state State) ValidMoves {
 		left: isValidMove(Coord{ X: head.X - 1, Y: head.Y }, state),
 		right: isValidMove(Coord{ X: head.X + 1, Y: head.Y }, state),
 	}
-
-	helpers.Dump("up", validMoves.up)
-	helpers.Dump("down", validMoves.down)
-	helpers.Dump("left", validMoves.left)
-	helpers.Dump("right", validMoves.right)
 
 	return validMoves
 }
@@ -68,9 +87,12 @@ func isValidMove(test Coord, state State) bool {
 		return false
 	}
 
+	// will hit snake body.
 	for i := 0; i < len(snakes); i++ {
 		body := snakes[i].Body
-		for j := 0; j < len(body); j++ {
+		// ignore the snake head.
+		// Hitting the head could be a valid move.
+		for j := 1; j < len(body); j++ {
 			if (test == body[j]) {
 				isValid = false
 			}
