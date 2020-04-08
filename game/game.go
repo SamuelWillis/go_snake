@@ -20,27 +20,29 @@ func GetNextMove(state State) string {
 			You: state.You,
 			Food: state.Board.Food,
 		}.GetMoveToFood()
+		helpers.Dump("Eating Food", coordToMoveTo)
 	}
 
 	if behaviours.ShouldChaseTail() {
 		coordToMoveTo = ChaseTail{
 			You: state.You,
 		}.GetMoveToTail()
+		helpers.Dump("Moving to Tail", coordToMoveTo)
 	}
-
-	helpers.Dump("coordToMoveTo", coordToMoveTo)
 
 	// Safety Net. If no coord to move to choose a random move.
 	if coordToMoveTo == (Coord{}) {
-		move := chooseRandomMove(validMoves)
-		helpers.Dump("choosing random move", move)
-		return move
+		return ""
 	}
+
+	helpers.Dump("possible validMoves", validMoves)
 
 	return getDirectionToCoord(coordToMoveTo, state, validMoves)
 }
 
-func getDirectionToCoord(coord Coord, state State, validMoves ValidMoves) (direction string) {
+func getDirectionToCoord(coord Coord, state State, validMoves ValidMoves) string {
+	direction := ""
+
 	head := state.You.Body[0]
 
 	if head.X < coord.X && validMoves.right {
@@ -59,7 +61,7 @@ func getDirectionToCoord(coord Coord, state State, validMoves ValidMoves) (direc
 		direction = "up"
 	}
 
-	return chooseRandomMove(validMoves)
+	return direction
 }
 
 func getValidMoves(state State) ValidMoves {
@@ -101,27 +103,4 @@ func isValidMove(test Coord, state State) bool {
 		}
 	}
 	return isValid
-}
-
-func chooseRandomMove(validMoves ValidMoves) string {
-	rand.Seed(time.Now().Unix())
-	var moves []string
-
-	if validMoves.up {
-		moves = append(moves, "up")
-	}
-
-	if validMoves.down {
-		moves = append(moves, "down")
-	}
-
-	if validMoves.left {
-		moves = append(moves, "left")
-	}
-
-	if validMoves.right {
-		moves = append(moves, "right")
-	}
-
-	return moves[rand.Intn(len(moves))]
 }
