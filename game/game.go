@@ -28,6 +28,8 @@ func GetNextMove(state State) string {
 		}.GetMoveToTail()
 	}
 
+	helpers.Dump("coordToMoveTo", coordToMoveTo)
+
 	// Safety Net. If no coord to move to choose a random move.
 	if coordToMoveTo == (Coord{}) {
 		move := chooseRandomMove(validMoves)
