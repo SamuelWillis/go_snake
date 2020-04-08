@@ -1,8 +1,6 @@
 package game
 
 import(
-	"math/rand"
-	"time"
 	"github.com/SamuelWillis/go_snake/helpers"
 )
 
