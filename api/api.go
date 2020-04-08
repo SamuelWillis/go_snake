@@ -26,7 +26,8 @@ func Start(res http.ResponseWriter, req *http.Request) {
 	helpers.Dump("decoded board state", state)
 
 	respond(res, StartResponse{
-		Color: "#75CEDD",
+		HeadType: "bendr",
+		TailType: "round-bum",
 	})
 }
 
@@ -40,9 +41,7 @@ func Move(res http.ResponseWriter, req *http.Request) {
 	}
 
 	helpers.Dump("decoded board state", state)
-
 	move := game.GetNextMove(state)
-
 	helpers.Dump("next move", move)
 
 	respond(res, MoveResponse{

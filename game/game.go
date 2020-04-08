@@ -1,89 +1,138 @@
 package game
 
 import(
-	"math"
+	"math/rand"
+	"time"
 	"github.com/SamuelWillis/go_snake/helpers"
 )
 
 // GetNextMove that our snake will do.
 func GetNextMove(state State) string {
-	move := "left"
+	var coordToMoveTo Coord
 
-	snakeBody := state.You.Body
-	head := snakeBody[0]
-	food := state.Board.Food
-
-	min := math.Inf(0)
-	var minFood Coord
-
-	for i := 0; i < len(food); i++ {
-		dist :=  math.Abs(float64(food[i].X - head.X)) + math.Abs(float64(food[i].Y - head.Y))
-
-		if dist <= min {
-			min = dist
-			minFood = food[i]
-		}
+	validMoves := getValidMoves(state)
+	behaviours := Behaviours{
+		You: state.You,
 	}
 
-	if minFood != (Coord{}) {
-		move = getDirection(state, minFood)
+	if behaviours.ShouldEatFood() {
+		coordToMoveTo = EatFood{
+			You: state.You,
+			Food: state.Board.Food,
+		}.GetMoveToFood()
+		helpers.Dump("Eating Food", coordToMoveTo)
 	}
 
-	return move
+	if behaviours.ShouldChaseTail() {
+		coordToMoveTo = ChaseTail{
+			You: state.You,
+		}.GetMoveToTail()
+		helpers.Dump("Moving to Tail", coordToMoveTo)
+	}
+
+	// Safety Net. If no coord to move to choose a random move.
+	if coordToMoveTo == (Coord{}) {
+		return ""
+	}
+
+	helpers.Dump("possible validMoves", validMoves)
+
+	return getDirectionToCoord(coordToMoveTo, state, validMoves)
 }
 
-func getDirection(state State, minFood Coord) (direction string) {
+func getDirectionToCoord(coord Coord, state State, validMoves ValidMoves) string {
+	direction := ""
+
 	head := state.You.Body[0]
 
-	validMoves := getValidMoves(state.You.Body)
-
-	helpers.Dump("Valid Moves", validMoves.up)
-
-	if head.X < minFood.X && validMoves.right {
+	if head.X < coord.X && validMoves.right {
 		direction = "right"
 	}
 
-	if head.X > minFood.X && validMoves.left {
+	if head.X > coord.X && validMoves.left {
 		direction = "left"
 	}
 
-	if head.Y < minFood.Y && validMoves.down {
+	if head.Y < coord.Y && validMoves.down {
 		direction = "down"
 	}
 
-	if head.Y > minFood.Y && validMoves.up {
+	if head.Y > coord.Y && validMoves.up {
 		direction = "up"
 	}
 
-	return
-}
-
-// ValidMoves type
-type ValidMoves struct {
-	up bool
-	down bool
-	left bool
-	right bool
-}
-
-func getValidMoves(snake []Coord) ValidMoves {
-	head := snake[0]
-	body := snake[1:]
-	
-	return ValidMoves{
-		up: isValid(Coord{ X: head.X, Y: head.Y - 1 }, body),
-		down: isValid(Coord{ X: head.X, Y: head.Y + 1 }, body),
-		left: isValid(Coord{ X: head.X - 1, Y: head.Y }, body),
-		right: isValid(Coord{ X: head.X + 1, Y: head.Y }, body),
+	// if we cannot move in a direction we want to move
+	// pick a random one.
+	if (direction == "") {
+		direction = chooseRandomMove(validMoves)
 	}
+
+	return direction
 }
 
-func isValid(test Coord, body []Coord) bool {
+func chooseRandomMove(validMoves ValidMoves) string {
+	rand.Seed(time.Now().Unix())
+	var moves []string
+
+	if validMoves.up {
+		moves = append(moves, "up")
+	}
+
+	if validMoves.down {
+		moves = append(moves, "down")
+	}
+
+	if validMoves.left {
+		moves = append(moves, "left")
+	}
+
+	if validMoves.right {
+		moves = append(moves, "right")
+	}
+
+	if len(moves) == 0 {
+		return ""
+	}
+
+	return moves[rand.Intn(len(moves))]
+}
+
+func getValidMoves(state State) ValidMoves {
+	head := state.You.Body[0]
+
+	validMoves := ValidMoves{
+		up: isValidMove(Coord{ X: head.X, Y: head.Y - 1 }, state),
+		down: isValidMove(Coord{ X: head.X, Y: head.Y + 1 }, state),
+		left: isValidMove(Coord{ X: head.X - 1, Y: head.Y }, state),
+		right: isValidMove(Coord{ X: head.X + 1, Y: head.Y }, state),
+	}
+
+	return validMoves
+}
+
+func isValidMove(test Coord, state State) bool {
 	isValid := true
-	for i := 0; i < len(body); i++ {
-		if (test == body[i]) {
-			isValid = false
-			break
+	snakes := state.Board.Snakes
+
+	// out of bounds
+	if test.X < 0 || test.X >= state.Board.Width {
+		return false
+	}
+
+	// out of bounds
+	if test.Y < 0 || test.Y >= state.Board.Height {
+		return false
+	}
+
+	// will hit snake body.
+	for i := 0; i < len(snakes); i++ {
+		body := snakes[i].Body
+		// ignore the snake head.
+		// Hitting the head could be a valid move.
+		for j := 1; j < len(body); j++ {
+			if (test == body[j]) {
+				isValid = false
+			}
 		}
 	}
 	return isValid

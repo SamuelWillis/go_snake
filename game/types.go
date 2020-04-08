@@ -34,3 +34,11 @@ type State struct {
 	Board Board
 	You   Snake
 }
+
+// ValidMoves type
+type ValidMoves struct {
+	up bool
+	down bool
+	left bool
+	right bool
+}
