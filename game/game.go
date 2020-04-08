@@ -1,6 +1,8 @@
 package game
 
 import(
+	"math/rand"
+	"time"
 	"github.com/SamuelWillis/go_snake/helpers"
 )
 
@@ -59,7 +61,40 @@ func getDirectionToCoord(coord Coord, state State, validMoves ValidMoves) string
 		direction = "up"
 	}
 
+	// if we cannot move in a direction we want to move
+	// pick a random one.
+	if (direction == "") {
+		direction = chooseRandomMove(validMoves)
+	}
+
 	return direction
+}
+
+func chooseRandomMove(validMoves ValidMoves) string {
+	rand.Seed(time.Now().Unix())
+	var moves []string
+
+	if validMoves.up {
+		moves = append(moves, "up")
+	}
+
+	if validMoves.down {
+		moves = append(moves, "down")
+	}
+
+	if validMoves.left {
+		moves = append(moves, "left")
+	}
+
+	if validMoves.right {
+		moves = append(moves, "right")
+	}
+
+	if len(moves) == 0 {
+		return ""
+	}
+
+	return moves[rand.Intn(len(moves))]
 }
 
 func getValidMoves(state State) ValidMoves {
