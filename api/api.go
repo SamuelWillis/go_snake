@@ -40,6 +40,7 @@ func Move(res http.ResponseWriter, req *http.Request) {
 		log.Printf("Bad move request: %v", err)
 	}
 
+	helpers.Dump("decoded board state", state)
 	move := game.GetNextMove(state)
 	helpers.Dump("next move", move)
 
